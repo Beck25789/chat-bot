@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ฟอร์มจองห้องผ่าตัด</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f2f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    form {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    fieldset {
+      border: none;
+    }
+
+    legend {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #1a237e;
+    }
+
+    .item {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="datetime-local"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .input-groups {
+      display: flex;
+      gap: 20px;
+    }
+
+    .width50 {
+      flex: 1;
+    }
+
+    fieldset > legend {
+      color: #3949ab;
+      font-size: 18px;
+    }
+
+    fieldset label {
+      font-weight: normal;
+    }
+
+    button[type="submit"] {
+      background-color: #1e88e5;
+      color: white;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #1565c0;
+    }
+
+    .note-fieldset {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+
+    .note-fieldset legend {
+      font-weight: bold;
+      font-size: 16px;
+      color: #2e3c6b;
+    }
+  </style>
+</head>
+
+<body>
+
+<script>
+  window.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('/me');
+      if (!res.ok) throw new Error('Unauthorized');
+
+      const data = await res.json();
+      document.getElementById('name').value = data.name || '';
+      document.getElementById('phone').value = data.phone || '';
+      document.getElementById('userId').value = data.id || '';
+
+      document.getElementById('name').readOnly = true;
+      document.getElementById('phone').readOnly = true;
+    } catch (err) {
+      alert('กรุณาเข้าสู่ระบบก่อนใช้งาน');
+      window.location.href = '/auth';
+    }
+  });
+</script>
+
+<form action="/submit" method="POST">
+  <fieldset>
+    <legend>รายละเอียดของการจองห้องผ่าตัด</legend>
+
+    <!-- ห้องผ่าตัดและ HN -->
+    <div class="item input-groups">
+      <div class="width50">
+        <label for="room_id">ห้องผ่าตัด</label>
+        <select name="room_id" id="room_id">
+          <option value="8">ห้อง SMC</option>
+          <option value="5">ห้อง1 ชั้น1</option>
+          <option value="1">ห้อง1 ชั้น4</option>
+          <option value="6">ห้อง2 ชั้น1</option>
+          <option value="2">ห้อง2 ชั้น4</option>
+          <option value="7">ห้อง3 ชั้น1</option>
+          <option value="3">ห้อง3 ชั้น4 EMERGENCY</option>
+          <option value="4">ห้อง4 ชั้น4</option>
+        </select>
+      </div>
+      <div class="width50">
+        <label for="attendees">HN</label>
+        <input name="attendees" id="attendees" type="text">
+      </div>
+    </div>
+
+    <!-- ข้อมูลผู้ป่วย -->
+    <div class="item"><label for="topic">ชื่อ-นามสกุล</label><input type="text" name="topic" id="topic"></div>
+    <div class="item"><label for="age">อายุ</label><input name="age" id="age" type="text"></div>
+    <div class="item"><label for="diagnosis">Diagnosis</label><input type="text" name="diagnosis" id="diagnosis"></div>
+    <div class="item"><label for="operation">Operation</label><input type="text" name="operation" id="operation"></div>
+    <div class="item"><label for="bloodcomponent">Blood Component</label><input type="text" name="bloodcomponent" id="bloodcomponent"></div>
+    <div class="item"><label for="currentdrug">Current Drug</label><input type="text" name="currentdrug" id="currentdrug"></div>
+
+    <!-- ข้อมูลผู้จอง -->
+    <div class="item input-groups">
+      <div class="width50">
+        <label for="name">ชื่อผู้จอง</label>
+        <input type="text" name="name" id="name" readonly>
+      </div>
+      <div class="width50">
+        <label for="phone">เบอร์โทรศัพท์</label>
+        <input type="text" name="phone" id="phone" readonly>
+      </div>
+    </div>
+    <input type="hidden" name="userId" id="userId">
+
+    <!-- แพทย์ / แผนก / NPO -->
+    <div class="item">
+        <label for="use">แพทย์</label>
+        <select name="use" id="use">
+          <option value="1" selected="">สุธัญญา เสริมชัยวงศ์</option>
+          <option value="10">จตุพล โสวิรัชน์</option>
+          <option value="11">อภิวิช มงคลกำธร</option>
+          <option value="12">อุกฤษฏ์ ส่งไพบูลย์</option>
+          <option value="13">จันทนา จงพิพันธ์</option>
+          <option value="14">ภวันตี ขันมะลิ</option>
+          <option value="15">ศิวะนันท์ ศิวประสิทธิ์กุล</option>
+          <option value="16">ประกาศิต อาชีวะ</option>
+          <option value="17">สันติภาพ พุทธนิมนต์</option>
+          <option value="18">วิวรณ์ ลีลาปิยวัฒน์</option>
+          <option value="19">ราชรัตน์ ฉ้งทับ</option>
+          <option value="2">ปฏิพัทธ์ จินะธรรม</option>
+          <option value="20">คมฉัตร แก้วบัวดี</option>
+          <option value="21">อนุชิต อินตา</option>
+          <option value="22">ยลดา เดือนเพ็ญ</option>
+          <option value="23">ยศกร พรเกษมศาสตร์ นพ.</option>
+          <option value="24">ปฐมพงศ์ นิตย์น้อยสืบ นพ.</option>
+          <option value="3">อรวรรณ เชาว์สวัสดิ์</option>
+          <option value="5">กิตติศักดิ์ ถานุ</option>
+          <option value="6">หทัย ปัญญาดิลก</option>
+          <option value="8">ศราวุธ กันสืบ</option>
+          <option value="9">อธินันท์ กำไล</option>
+        </select>
+      </div>
+      <div class="item">
+        <label for="department">แผนก</label>
+        <select name="department" id="department">
+          <option value="1">ศัลยกรรมทั่วไป</option>
+          <option value="2">ศัลยกรรมทางเดินปัสสาวะ</option>
+          <option value="3">ออร์โธปิดิกส์</option>
+          <option value="4">สูตินรีเวช</option>
+          <option value="5">ทันตกรรม</option>
+          <option value="6">หูคอจมูก</option>
+          <option value="7">จักษุ</option>
+        </select>
+      </div>
+      <div class="item">
+        <label for="npo">NPO Time</label>
+        <select name="npo" id="npo">
+          <option value="1">NPO AMN</option>
+          <option value="2">NPO 6.00 น.</option>
+          <option value="3">NPO 8.00 น.</option>
+          <option value="4">NPO 10.00 น.</option>
+          <option value="5">NPO เวลาอื่นๆ......ใส่ในหมายเหตุ</option>
+          <option value="6">NO NPO</option>
+        </select>
+      </div>
+      <div class="item">
+        <label for="otype">Op Type</label>
+        <select name="otype" id="otype">
+          <option value="1">Elective</option>
+          <option value="2">Emergency</option>
+          <option value="3">Urgency</option>
+          <option value="4">On call</option>
+        </select>
+      </div>
+
+      <!-- 📅 วันเวลา -->
+      <div class="item">
+        <label for="start_datetime"><strong>วันที่และเวลาเริ่มต้น</strong></label><br>
+        <input type="datetime-local" id="start_datetime" name="start_datetime">
+      </div>
+      <div class="item">
+        <label for="end_datetime"><strong>วันที่และเวลาสิ้นสุด</strong></label><br>
+        <input type="datetime-local" id="end_datetime" name="end_datetime">
+      </div>
+
+      <!-- 📝 หมายเหตุ checkbox -->
+      <div class="item">
+        <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+          <legend><strong>หมายเหตุ</strong></legend>
+          <label><input type="checkbox" name="comment[]" value="งดยา"> Consult Anes</label><br />
+          <label><input type="checkbox" name="comment[]" value="แพ้ยา"> Emer(I)</label><br />
+          <label><input type="checkbox" name="comment[]" value="มีฟันปลอม"> Emer(C)</label><br />
+          <label><input type="checkbox" name="comment[]" value="ตั้งครรภ์"> Emer(U)</label><br />
+          <label><input type="checkbox" name="comment[]" value="เบาหวาน"> Emer(P)</label><br />
+          <label><input type="checkbox" name="comment[]" value="ความดันโลหิตสูง"> Emer(N)</label><br />
+          <label><input type="checkbox" name="comment[]" value="โรคหัวใจ"> Consult Med</label><br />
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> Consult Ped</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> จอง ICU</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> จองเลือด</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> มีประวัติแพ้ยา/แพ้อาหาร</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive">
+            ใช้ยาที่มีผลต่อการแข็งตัวของเลือด</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> ใช้ Flu</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive">
+            ใช้ยาที่มีผลต่อการแข็งตัวของเลือด</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> ATK Negative</label>
+          <label><input type="checkbox" name="comment[]" value="ผล ATK Positive"> ATK Positive</label>
+
+        </fieldset>
+      </div>
+
+      <!-- ✏️ อื่นๆ -->
+      <div class="item">
+        <label for="other">อื่นๆ</label>
+        <input type="text" name="other" id="other" maxlength="150">
+      </div>
+
+      <div class="item">
+        <label for="status">สถานะ</label>
+        <select name="status" id="status">
+          <option value="0">รอตรวจสอบ</option>
+          <option value="1">อนุมัติ รอผ่าตัด</option>
+          <option value="2">ไม่อนุมัติ</option>
+          <option value="3">OFF case</option>
+          <option value="4">ยกเลิกโดยเจ้าหน้าที่</option>
+          <option value="5">ผ่าตัดเสร็จแล้ว</option>
+          <option value="6">PREVISIT</option>
+        </select>
+      </div>
+    <!-- Submit -->
+    <div class="item" style="margin-top: 25px;">
+      <button type="submit">ส่งข้อมูล</button>
+    </div>
+  </fieldset>
+</form>
+
+</body>
+</html>

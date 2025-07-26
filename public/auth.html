@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+    }
+    .tabs {
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      padding: 10px 20px;
+      margin-right: 5px;
+      cursor: pointer;
+      background-color: #ddd;
+      border: none;
+      font-weight: bold;
+    }
+    .tabs button.active {
+      background-color: #4285f4;
+      color: white;
+    }
+    .form-section {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    }
+    .form-section.active {
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button[type="submit"] {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>OR Booking System</h1>
+
+  <div class="tabs">
+    <button id="loginTab" class="active" onclick="switchTab('login')">Login</button>
+    <button id="registerTab" onclick="switchTab('register')">Register</button>
+  </div>
+
+  <!-- Login Form -->
+  <div id="login-section" class="form-section active">
+    <h2>Login</h2>
+    <form method="POST" action="/login">
+      <label>Username:</label>
+      <input type="text" name="username" required><br><br>
+
+      <label>Password:</label>
+      <input type="password" name="password" required><br><br>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <!-- Register Form -->
+  <div id="register-section" class="form-section">
+    <h2>Register</h2>
+    <form method="POST" action="/register">
+      <label>Username:</label>
+      <input type="text" name="username" required><br><br>
+
+      <label>Password:</label>
+      <input type="password" name="password" required><br><br>
+
+      <label>Full Name:</label>
+      <input type="text" name="name" required><br><br>
+
+      <label>Phone:</label>
+      <input type="text" name="phone" required><br><br>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.getElementById('login-section').classList.remove('active');
+      document.getElementById('register-section').classList.remove('active');
+      document.getElementById('loginTab').classList.remove('active');
+      document.getElementById('registerTab').classList.remove('active');
+
+      if (tab === 'login') {
+        document.getElementById('login-section').classList.add('active');
+        document.getElementById('loginTab').classList.add('active');
+      } else {
+        document.getElementById('register-section').classList.add('active');
+        document.getElementById('registerTab').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
