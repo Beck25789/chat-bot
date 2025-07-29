@@ -14,7 +14,7 @@ const cookieParser = require('cookie-parser');
 // === CONFIG ===
 const app = express();
 const port = 3000;
-const token = '7813036730:AAFFvYd7g9Sp6dT3QfJkAPAYeq0E_XDQ3Xc'; // Telegram bot token from second code
+const token = '7813036730:AAFFvYd7g9Sp6dT3QfJkAPAYeq0E_XDQ3Xc'; // Telegram bot token 
 const groupId = -1002870074436;
 const bot = new TelegramBot(token, { polling: true });
 const JWT_SECRET = 'secret-key-or-booking';
@@ -261,7 +261,7 @@ function getTimestamp() {
     const localeString = now.toLocaleString('sv-SE', options);
     return localeString.replace(' ', 'T').replace('T', ' ').replaceAll('.', '-');
 }
-
+ 
 // === TELEGRAM BOT COMMANDS AND FUNCTIONS ===
 let commandUsage = {};
 
@@ -765,6 +765,40 @@ async function generateYearlyRoomChart(year, labelText) {
         await bot.sendMessage(groupId, '❌ ไม่สามารถสร้างกราฟห้องรายปีได้');
     }
 }
+
+bot.onText(/\/help/, (msg) => {
+    if (msg.chat.id !== groupId) return;
+
+    const status = canProcessCommand('/help');
+    if (status === 2) {
+        return bot.sendMessage(groupId, '⏳ กรุณารอ 1 นาที ก่อนเรียกดูคำสั่ง /help อีกครั้ง');
+    }
+    if (status === 3) return;
+
+    const helpText = `
+🆘 *รายการคำสั่งทั้งหมด*
+
+📊 สรุปจำนวนการใช้งานห้องผ่าตัด:
+• /room – ดูการใช้งานห้องทั้งหมด
+• /room เดือน/ปี – ดูการใช้งานห้องแบบรายเดือน (เช่น /room 7/2568)
+• /room ปี – ดูการใช้งานห้องแบบรายปี (เช่น /room 2568)
+
+📊 สรุปสถานะการใช้งาน:
+• /status – ดูสถานะทั้งหมด
+• /status เดือน/ปี – ดูสถานะแบบรายเดือน (เช่น /status 7/2568)
+• /status ปี – ดูสถานะแบบรายปี (เช่น /status 2568)
+
+ℹ️ หมายเหตุ:
+- ใช้ปี *พ.ศ.* เช่น 2568
+- จำกัดการเรียกคำสั่งซ้ำทุก 1 นาที
+`.trim();
+
+    bot.sendMessage(groupId, helpText, { parse_mode: 'Markdown' });
+});
+
+
+
+
 
 // === SERVER START ===
 app.listen(port, () => {
