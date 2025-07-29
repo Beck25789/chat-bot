@@ -101,7 +101,7 @@ app.get('/me', (req, res) => {
     try {
         const user = jwt.verify(token, JWT_SECRET);
         // ส่ง id ของผู้ใช้กลับไปด้วย
-        res.json({ id: user.id, name: user.name, phone: user.phone }); 
+        res.json({ id: user.id, name: user.name, phone: user.phone });
     } catch (err) {
         res.status(401).json({ error: 'Invalid token' });
     }
@@ -119,8 +119,8 @@ app.post('/submit', async (req, res) => {
         operation,
         bloodcomponent,
         currentdrug,
-        name, 
-        phone, 
+        name,
+        phone,
         userId, // รับ userId ที่ส่งมาจาก frontend
         use,
         department,
@@ -261,7 +261,7 @@ function getTimestamp() {
     const localeString = now.toLocaleString('sv-SE', options);
     return localeString.replace(' ', 'T').replace('T', ' ').replaceAll('.', '-');
 }
- 
+
 // === TELEGRAM BOT COMMANDS AND FUNCTIONS ===
 let commandUsage = {};
 
